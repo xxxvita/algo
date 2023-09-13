@@ -1,0 +1,40 @@
+func lengthOfLongestSubstringKDistinct(s string, k int) int {
+	l, r := 0, 0
+	mapCh := make(map[byte]int)
+	maxLength := 0
+	// Формирую плавающее окно с границами l и r.
+	// Перемещаю r вперёд, прибавляя встреченное колличество раз очередного символа.
+	// Если длина мапки становится больше двух, до двигаю левый указатель вправо,
+	// вычитая из мапки одну единицу для каждого пройденного симола.
+	// Если символа больше нет в мапке, стоп двигать l.
+	// На каждой итерации цикла перемещения r обновляю maxLength.
+
+	//Input: s = "eceba"
+	//Output: 3
+	//Input: s = "ccaabbb"
+	for ; r < len(s); r++ {
+		// Считаю число каждой встреченной буквы
+		mapCh[s[r]] += 1
+		// Если в окне стало больше чем надо букв
+		// Двигается l вправо пока в окне не останется две разные буквы
+		for len(mapCh) > k {
+			l++
+
+			mapCh[s[l-1]] -= 1
+			if mapCh[s[l-1]] == 0 {
+				delete(mapCh, s[l-1])
+			}
+		}
+
+		maxLength = max(r-l+1, maxLength)
+	}
+
+	return maxLength
+}
+
+func max(a, b int) int {
+	if a > b {
+		return a
+	}
+	return b
+}
