@@ -1,0 +1,45 @@
+// Time: O(n)
+// mem: O(1)
+func totalFruit(fruits []int) int {
+    // Задача сводится к поиску наиболее длинной последовательности
+    // из максимум двух различных значений  fruits[i].
+    // Решать буду через плавающее окно с границами l и r.
+    // Границу r буду расширять пока не дойду до конца массива
+    // или не встретится третий уникальный фрукт, тогда я буду двигать
+    // левую границу до тех пор, число раличных уникальных фруктов
+    // снова не станет 2.
+    // На каждой итерации я буду пересчитывать максимальную ширину
+    // окна относительно текущей.
+    // Ответом на задачу будет максимальная ширина, встретившегося окна.
+    
+    l, r := 0, 0
+    maxLength := 0
+    mapFruits := make(map[int]int, 0) // тип, его количество в окне
+    //Input: fruits = [1,2,1]
+    //Output: 3
+    //Input: fruits = [0,1,2,2]
+    //Output: 3
+    for ; r < len(fruits); r++ {
+        mapFruits[fruits[r]] = mapFruits[fruits[r]] + 1
+        for len(mapFruits) > 2 {
+            mapFruits[fruits[l]] = mapFruits[fruits[l]] - 1
+            if mapFruits[fruits[l]] == 0 {
+                delete(mapFruits, fruits[l])
+            }
+
+            l++
+        }
+        
+        maxLength = max(r-l+1, maxLength)
+    }
+    
+    return maxLength
+}
+
+func max(a, b int) int {
+    if a > b {
+        return a
+    }
+
+    return b
+}
