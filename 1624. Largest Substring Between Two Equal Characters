@@ -1,0 +1,51 @@
+// Time: O(n)
+// mem: O(n)
+
+func maxLengthBetweenEqualCharacters(s string) int {
+    // За один проход заполняется мапка с крайними правыми позициями текущего
+    // символа в строке. За второй проход при встрече символа, который
+    // уже есть в мапке с координатами отличными от текущих вычисляется
+    // наиболее длинная последовательность.
+    if len(s) == 1 {
+        return -1
+    }
+    
+    // Мапка самых правых встреченых позиций символа в ключе
+    mapR := make(map[byte]int, 0)
+        
+    resultLen := -1
+    //Input: s = "aa"
+    //Output: 0
+
+    //Input: s = "abca"
+    //Output: 2
+    
+    //Input: ygtqdztaduxlsaacrwgtewywwchlnqzgjxhqgdhybncgaifonbe len(s):51
+    //Output: 41
+    //mapL: y:0 g:1 t:2 q:3 d:4 z:5 t:6 a:7 
+    //mapR: g:7 a:6 i:5 f:4 o:3 n:2 b:1 e:0 
+    // За первый проход получаю все максимальные правые значения позиций каждой
+    // буквы в строке s
+    for idx, c := range s {
+        mapR[byte(c)] = idx
+    }
+    
+    // За ещё один проход для буквы, которая есть в мапке, если позиция
+    // текущая не совпадает с запомненной ранее крайней правой вычисляется
+    // результирующая наибольшая последовательность
+    for i := 0; i<len(s); i++ {
+        if v, ok := mapR[s[i]]; ok && i != v {
+            resultLen = max(resultLen, v-i-1)
+        }
+    }
+    
+    return resultLen
+}
+
+func max(a, b int) int {
+    if a > b {
+        return a
+    }
+    
+    return b
+}
