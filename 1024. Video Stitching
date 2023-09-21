@@ -1,0 +1,103 @@
+Текст из моего поста на leetcode.
+https://leetcode.com/problems/video-stitching/solutions/4063132/po-russki
+
+Intuition
+Жадный алгоритм
+
+Approach
+Решается отбором на каждом интервале лучшего
+
+Complexity
+Time complexity:
+
+O(n*log(n))
+
+Space complexity:
+дополнительная память O(1)
+
+Code
+func videoStitching(clips [][]int, time int) int {
+	// Сортирую все клипы по возрастанию начала каждого клипа.
+
+	// Если задано не верное для поиска состояние
+	if len(clips) == 1 &&
+		clips[0][0] != 0 {
+		return -1
+	}
+
+	sort.Slice(clips, func(i, j int) bool {
+		if clips[i][0] < clips[j][0] {
+			return true
+		}
+
+		if clips[i][0] == clips[j][0] {
+			return clips[i][1] > clips[j][1]
+		}
+
+		return false
+	})
+
+	// Если задано не верное для поиска состояние
+	if clips[0][0] != 0 {
+		return -1
+	}
+
+	// Ответ на задачу: минимальное число необходимых клипов для
+	// покрытия интервала [0, time]
+	minCount := 1
+	// Максимальная на текущий момент накопленная длительность клипов
+	maxLasted := clips[0][1]
+	fromClip := 0 // клип, с которого собираемся перебираться в следующий клип
+
+	if maxLasted >= time {
+		return minCount
+	}
+
+	for {
+		bestClipId := -1
+		maxLastedPrev := -1
+		// Для текущего интервала ищется лучший для перехода
+		// в пределах границы клипа fromClip
+		for i := fromClip; i < len(clips); i++ {
+			if clips[i][0] <= clips[fromClip][1] &&
+				maxLasted < clips[i][1] {
+				maxLastedPrev = maxLasted
+
+				maxLasted = clips[i][1]
+
+				bestClipId = i
+			}
+
+			// Если достигнут ответ, то выход
+			if maxLasted >= time {
+				minCount++
+				return minCount
+			}
+
+			// Если перешли границу поиска клипов за границу clips[fromClip],
+			// то дальше не ищем
+			if clips[i][0] > clips[fromClip][1] {
+				break
+			}
+		}
+
+		// Если достигнут ответ, то выход
+		if maxLasted >= time {
+			minCount++
+			break
+		}
+
+		// если переход не осуществился, то ответа нет
+		if maxLastedPrev == -1 {
+			minCount = -1
+			break
+		}
+
+		// Следующий клип в покрытии, с которого будет осуществлён прыжок
+		// смещается на тот, который признан самым лучшим
+		fromClip = bestClipId
+		minCount++
+	}
+
+	return minCount
+}
