@@ -1,0 +1,129 @@
+//Time:
+//   Get: O(1)
+//   Put: O(1)
+//Mem:
+//   Get: O(1)
+//   Put: O(n)
+
+type Node struct {
+    Next *Node
+    Prev *Node
+    Key  int
+    Val  int
+}
+
+type Stack struct {
+    Head *Node  // вспомогательный элемент, указывающий на первый элемент стека
+    Tail *Node  // вспомогательный элемент, указывающий на последний элемент стека
+}
+
+type LRUCache struct {
+    Capacity int
+    Stack *Stack       // стек для учёта порядка обращения к элементам
+    Hash map[int]*Node // ключ и элемент в стеке, чтобы сразу манипулировать этим элементом
+}
+
+
+// Установка нового элемента в голову стека
+func (s *Stack) Insert(key, val int) *Node {
+    n := &Node{
+        Key: key,
+        Val: val,
+    }
+    
+    first := s.Head.Next
+
+    s.Head.Next = n
+    n.Prev = s.Head
+    n.Next = first
+    
+    first.Prev = n
+    
+    return n
+}
+
+// Удаление элемента из стека
+func (s *Stack) Delete(n *Node) {
+    n.Prev.Next = n.Next
+    n.Next.Prev = n.Prev
+}
+
+func Constructor(capacity int) LRUCache {
+    cache := LRUCache{
+        Capacity: capacity,
+    }
+    
+    stack := Stack{
+        Head: new(Node),
+        Tail: new(Node),
+    }
+    
+    stack.Head.Next = stack.Tail
+    stack.Tail.Prev = stack.Head
+    
+    cache.Stack = &stack
+    cache.Hash = make(map[int]*Node, 0)
+    
+    return cache
+}
+
+
+//Input
+//["LRUCache","put","put","get","put","get","put","get","get","get"]
+//[[2],[1,1],[2,2],[1],[3,3],[2],[4,4],[1],[3],[4]]
+
+// LRUCashe:
+//    Capacity: 2
+//    Stack:    + {1, 1, Head, &{2, 2}}, {2, 2, &{1, 1}, nil}
+//    Hash:     +
+
+// Stack:
+//   Head:  &1
+//   Head.Next: &{1, 1}, &{2, 2}, &{1, 1}
+//   Tail:  &1  &{1, 1}
+//   Size   0
+
+
+
+
+func (c *LRUCache) Get(key int) int {
+    v, ok := c.Hash[key]
+
+    if ok {
+        c.Stack.Delete(v)
+        delete(c.Hash, v.Key)
+
+        // Поставить на первое место в стеке v
+        v = c.Stack.Insert(v.Key, v.Val)
+        c.Hash[key] = v
+
+        return v.Val
+    }
+
+    return -1
+}
+
+func (c *LRUCache) Put(key int, value int)  {
+    if v, ok := c.Hash[key]; ok {
+        c.Stack.Delete(v)
+        delete(c.Hash, v.Key)
+    }
+
+    if len(c.Hash) == c.Capacity {
+        n := c.Stack.Tail.Prev
+        c.Stack.Delete(n)
+        
+        delete(c.Hash, n.Key)
+    }
+
+    node := c.Stack.Insert(key, value)
+    c.Hash[key] = node
+}
+
+
+/**
+ * Your LRUCache object will be instantiated and called as such:
+ * obj := Constructor(capacity);
+ * param_1 := obj.Get(key);
+ * obj.Put(key,value);
+ */
