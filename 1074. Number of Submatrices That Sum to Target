@@ -1,0 +1,51 @@
+// Перебираются почти все поддиапазоны с помощью трёх указателей.
+// Единственная оптимизация - это то, что назад от указателя поддиапазон не
+// ищется. Все суммы сравниваются с таргетной.
+// В субмитах на литкоде у меня есть решение с окном этой задачи. Она по
+// времени уже O(n**2).
+
+// Time: O(n**3) - перебираются все элементы
+// Mem: O(n*n) - пребилдинг матрица
+func precalculatePrefixSum(matrix [][]int) [][]int {
+	m := make([][]int, len(matrix)+1)
+	width := len(matrix[0]) + 1
+	for j := 0; j < len(m); j++ {
+		m[j] = make([]int, width)
+	}
+
+	for j := 1; j < len(m); j++ {
+		for i := 1; i < width; i++ {
+			m[j][i] = m[j-1][i] + m[j][i-1] - m[j-1][i-1] + matrix[j-1][i-1]
+		}
+	}
+
+	return m
+}
+
+func numSubmatrixSumTarget(matrix [][]int, target int) int {
+	result := 0
+
+	// подготавливается префиксный массив 2d сумм
+	prefixSum := precalculatePrefixSum(matrix)
+
+	// перебираются все элементы массива и проверяется сумма со всеми правыми и нижними
+	// элеентами
+	for j := 1; j < len(prefixSum); j++ {
+		for i := 1; i < len(prefixSum[j]); i++ {
+			// Для текущего элмента перебираются все, что не левее и не выше
+			for row2 := j; row2 < len(prefixSum); row2++ {
+				for col2 := i; col2 < len(prefixSum[row2]); col2++ {
+					// Находим сумму в массиве [j, i, row2, col2], если равна target,
+					// то добавляю к ответу
+					sum := prefixSum[row2][col2] - prefixSum[j-1][col2] - prefixSum[row2][i-1] +
+						prefixSum[j-1][i-1]
+					if sum == target {
+						result++
+					}
+				}
+			}
+		}
+	}
+
+	return result
+}
