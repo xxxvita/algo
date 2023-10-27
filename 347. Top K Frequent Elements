@@ -1,0 +1,43 @@
+// В мапку считаю число каждого числа.
+// Мапка разворачивается в счётный двумерный массив, где одно значение (само счётное)
+// это частота, а второе - это слайс чисел, которые имеют такое число повторений.
+// Пробегая счётный массив с большего элемента к меньшему, собирается ответ из
+// слайсов чисел.
+
+// Time: O(n)
+// mem: O(n + k)
+func topKFrequent(nums []int, k int) []int {
+    mapCount := make(map[int]int)
+    maxCount := 0
+    result := make([]int, 0)
+
+    for _, n := range nums {
+        mapCount[n] += 1
+        if mapCount[n] > maxCount {
+            maxCount++
+        }
+    }
+
+    offset := -1
+    masCount := make([][]int, maxCount)
+    //[1,1,1,2,2,3], k = 2
+    //[1], k = 1
+    for el, cnt := range mapCount {
+        if masCount[cnt+offset] == nil {
+            masCount[cnt+offset] = make([]int, 0)
+        }
+        
+        masCount[cnt+offset] = append(masCount[cnt+offset], el)
+    }
+
+    for i:=len(masCount)-1; i>=0 && k > 0; i-- {
+        if len(masCount[i]) > 0 {
+            for j := 0; j<len(masCount[i]) && k > 0; j++ {
+                result = append(result, masCount[i][j])
+                k--
+            }
+        }
+    }
+
+    return result
+}
