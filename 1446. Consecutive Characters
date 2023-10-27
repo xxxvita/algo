@@ -1,0 +1,26 @@
+// Перебирая строку, ищется длина подстроки с максимальной мощностью.
+
+// Time: O(n)
+// mem: O(1)
+// "leetcode"
+func maxPower(s string) int {
+    maxLengthSeq := 0
+    curLengthSeq := 1
+
+    for i := 1; i < len(s); i++ {
+        if s[i] == s[i-1] {
+            curLengthSeq++
+        } else {
+            if curLengthSeq > maxLengthSeq {
+                maxLengthSeq = curLengthSeq
+            }
+            curLengthSeq = 1
+        }
+    }
+
+    if curLengthSeq > maxLengthSeq {
+        maxLengthSeq = curLengthSeq
+    }
+
+    return maxLengthSeq
+}
