@@ -1,0 +1,29 @@
+//Поместив в первые два элемента массива, наиболее большие значения,
+//ответом будет их произведение.
+
+// Time: O(n)
+// mem: O(1)
+func sort(mas []int) {
+    if mas[0] > mas[1] {
+        mas[0], mas[1] = mas[1], mas[0]
+    }
+}
+
+func maxProduct(nums []int) int {
+    mas := make([]int, 3, 3)
+    
+    mas[0] = nums[0]-1
+    mas[1] = nums[1]-1
+    
+    sort(mas)
+    
+    for i := 2; i<len(nums); i++ {
+        el := nums[i] - 1
+        if el > mas[0] {
+            mas[0] = el
+            sort(mas)
+        }
+    }
+    
+    return mas[0] * mas[1]
+}
