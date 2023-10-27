@@ -1,0 +1,37 @@
+// Перебираются все элементы из arr1 на предмет проверки условия задачи в arr2
+// Time: O(n*logn)
+// mem: O(1)
+func findTheDistanceValue(arr1 []int, arr2 []int, d int) int {
+    result := 0
+    // Сортируется arr2
+    sort.Ints(arr2)
+
+    // Перебираются все элементы из arr1 на предмет проверки условия задачи в arr2
+    //arr1 = [4,5,8], arr2 = [10,9,1,8], d = 2
+    for i:=0; i<len(arr1); i++ {
+        l := arr1[i] - d
+        r := 0
+
+        flTest := true
+        for r < len(arr2) && l <= arr1[i] + d {
+            if l < arr2[r] {
+                l++
+                continue
+            }
+            if arr2[r] < l {
+                r++
+                continue
+            }
+            if l == arr2[r] {
+                flTest = false
+                break
+            }
+        }
+
+        if flTest == true {
+            result++
+        }
+    }
+    
+    return result
+}
