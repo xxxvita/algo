@@ -1,0 +1,34 @@
+// Проходя двумя указателями строку слева и справа,
+// проверяется равенство зеркальных относительно центра символов.
+// Если символы не равно, то допускается одно такое не соотвтетствие.
+
+// Time: O(n)
+// mem: O(1)
+func validPalindrome(s string) bool {
+    isUse := false
+    result := true
+
+    l := 0
+    r := len(s)-1
+
+    b := []byte(s)
+    // cbbcc expected true
+    for l < r {
+        if b[l] == b[r] {
+            l++
+            r--
+        } else {
+            if b[l] != b[r] {
+                if !isUse {
+                    isUse = true
+                    l++
+                } else {
+                    result = false
+                    break
+                }
+            }
+        }
+    }
+
+    return result
+}
