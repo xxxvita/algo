@@ -1,0 +1,39 @@
+// Находим позицию первого не уникального элемента в nums.
+// Её определяет l. Затем для всех элементов дальше l производится сдвиг
+// на одну позицию, если только очередной элемент не равен тому, на который
+// указывает l.
+
+// Time: O(n)
+// mem: O(1)
+func removeDuplicates(nums []int) int {
+    l := 0
+    k := 0
+
+    // Установить начальную позицию указателя l
+    for l = 0; l<len(nums); l++ {
+        if l == 0 {
+            k++
+            continue
+        }
+
+        if nums[l] == nums[l-1] {
+            break
+        }
+
+        k++
+    }
+
+    if l == len(nums) {
+        return k
+    }
+
+    for r := l + 1; r < len(nums); r++ {
+        if nums[l-1] != nums[r] {
+            nums[l] = nums[r]
+            l++
+            k++
+        }
+    }
+
+    return k
+}
