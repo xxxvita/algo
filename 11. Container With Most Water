@@ -1,0 +1,34 @@
+// Два указателя (селва и справа).
+// Девый движется, если высота палки меньше правого.
+// Правый движется, если высота палки меньше левого.
+// Этот процесс заменяет перебор. Надо смотреть внимательнее.
+
+// Time: O(n)
+// mem: O(1)
+
+func maxArea(height []int) int {
+    var maxArea int = 0
+
+    //[1,8,6,2,5,4,8,3,7]
+    for l, r := 0, len(height)-1; l < r; {
+        curH := 0
+        if height[l] > height[r] {
+            curH = height[r]
+        } else {
+            curH = height[l]
+        } 
+
+        area := curH * (r - l)
+        if maxArea < area {
+            maxArea = area
+        }
+
+        if height[l] <= height[r] {
+           l++ 
+        } else {
+           r--
+        }
+    }
+
+    return maxArea
+}
