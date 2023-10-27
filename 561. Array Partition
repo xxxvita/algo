@@ -1,0 +1,29 @@
+// Похоже, что максимальная сумма складывается из
+// подряд идущих элементов в отсортированном массиве.
+// Time: O(n)
+// mem: O(1)
+func arrayPairSum(nums []int) int {
+    offset := 10000
+    masCount := make([]int, 10000 * 2 + 1)
+    // 1 4 3 2
+    for _, n := range nums{
+        masCount[n + offset] += 1
+    }
+
+    // 1 2 3 4
+    pos := 0
+    sum := 0
+    for idx, n := range masCount{
+        if n != 0 {
+            for j := 0; j < n; j++ {
+                if pos % 2 == 0 {
+                    sum += idx - offset
+                }
+
+                pos += 1
+            }
+        }
+    }
+
+    return sum
+}
