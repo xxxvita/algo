@@ -1,1 +1,45 @@
+// Как и в другой задаче с массивом и k-частотой символов:
+// сначала в мапку все символы, считаем их частоту, потом мапку разворачиваем
+// в счётный массив, а оттуда получаем ответ.
 
+// Time: O(n), где n - Длина строки
+// mem: O(1)
+func frequencySort(s string) string {    
+    mapCount := make(map[int]int, 0)
+    maxFreq := 0
+    
+    for i := 0; i<len(s); i++ {
+        c := int(s[i])
+        mapCount[c] = mapCount[c] + 1
+        maxFreq = max(maxFreq, mapCount[c])
+    }
+    offset := -1
+    masCount := make([][]int, maxFreq)
+    for c, freq := range mapCount {
+        if len(masCount[freq+offset]) == 0 {
+            masCount[freq+offset] = make([]int, 0)
+        }
+        
+        masCount[freq+offset] = append(masCount[freq+offset], c)
+    }
+    
+    result := "" // "eeettrr" [ 0    1 ]
+                //            [[tr] [e]]
+                //          
+    for i := len(masCount) - 1; i >= 0; i-- { // 1 0
+        for j := 0; j<len(masCount[i]); j++ { // 0, 1, 0
+            for cnt := 0; cnt <= i; cnt++ {
+                result += string(byte(masCount[i][j]))
+            }
+        }
+    }
+    
+    return result    
+}
+
+func max(a, b int) int {
+    if a > b {
+        return a
+    }
+    return b
+}
