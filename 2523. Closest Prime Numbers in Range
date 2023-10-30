@@ -1,0 +1,50 @@
+/*
+Решетом Эратосфена веду поиск простых чисел между заданными,
+среди высех простоы найденных чисел нахожу те, между которыми минимальная разница.
+*/
+
+//Time: O((R-L)/Log R)
+//mem: O((R-L)/Log R)
+
+func isPrime(num int) bool {
+	if num == 1 {
+		return false
+	}
+	for divisor := 2; divisor <= int(math.Sqrt(float64(num))); divisor++ {
+		if num%divisor == 0 {
+			return false
+		}
+	}
+	return true
+}
+
+func closestPrimes(left, right int) []int {
+	primes := make([]int, 0)
+	for candidate := left; candidate <= right; candidate++ {
+		if isPrime(candidate) {
+			if len(primes) > 0 && candidate <= primes[len(primes)-1]+2 {
+				return []int{primes[len(primes)-1], candidate}
+			}
+			primes = append(primes, candidate)
+		}
+	}
+
+	ps := make([][]int, 0)
+	for i := 1; i < len(primes); i++ {
+		ps = append(ps, []int{primes[i-1], primes[i]})
+	}
+
+	minGap := []int{-1, -1}
+	minDiff := math.MaxInt64
+
+	for _, prim := range ps {
+		diff := prim[1] - prim[0]
+		if diff < minDiff || (diff == minDiff && prim[0] < minGap[0]) {
+			minDiff = diff
+			minGap = prim
+		}
+	}
+
+	return minGap
+}
+//c
