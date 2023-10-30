@@ -1,0 +1,45 @@
+//Time: O(max(len(s), len(p)))
+//mem: O(max(len(s), len(p)))
+func findAnagrams(s string, p string) []int {
+	res := make([]int, 0)
+
+	charFreq := make(map[byte]int)
+
+	for i := 0; i < len(p); i++ {
+		charFreq[p[i]]++
+	}
+
+	l, numberMatchC := 0, 0
+
+	for rw := 0; rw < len(s); rw++ {
+		for rw-l+1 > len(p) {
+			leftChar := s[l]
+
+			if frequency, ok := charFreq[leftChar]; ok {
+				if frequency == 0 {
+					numberMatchC--
+				}
+
+				charFreq[leftChar]++
+			}
+
+			l++
+		}
+
+		r := s[rw]
+
+		if _, ok := charFreq[r]; ok {
+			charFreq[r] -= 1
+
+			if charFreq[r] == 0 {
+				numberMatchC++
+			}
+		}
+
+		if numberMatchC == len(charFreq) {
+			res = append(res, l)
+		}
+	}
+
+	return res
+}
